@@ -2,8 +2,8 @@
 
 echo "=== DIAGNOSTIC DES PERMISSIONS ==="
 echo "Utilisateur courant : $(id)"
-echo "Contenu et droits de /workspace :"
-ls -la /workspace
+echo "Contenu récursif de /workspace :"
+ls -R /workspace
 
 echo "Test d'écriture sur le volume S3..."
 if touch /workspace/test_write.txt; then
