@@ -4,16 +4,18 @@ FROM ollama/ollama:latest
 RUN mkdir -p /workspace /tmp/.ollama && \
     chown -R 42420:42420 /workspace /tmp /tmp/.ollama
 
-# Variables d'environnement intégrées à l'image
+# Variables d'environnement
 ENV HOME=/tmp
 ENV OLLAMA_MODELS=/workspace/models
 ENV OLLAMA_HOST=0.0.0.0
 
-# Exposition du port par défaut d'Ollama
+# Copie d'un script d'initialisation (on va le créer juste après)
+COPY entrypoint.sh /usr/bin/entrypoint.sh
+RUN chmod +x /usr/bin/entrypoint.sh
+
 EXPOSE 11434
 
-# Forcer l'utilisation de l'utilisateur non-root d'OVHcloud
 USER 42420:42420
 
-ENTRYPOINT ["/bin/ollama"]
-CMD ["serve"]
+# Utiliser le script comme point d'entrée
+ENTRYPOINT ["/usr/bin/entrypoint.sh"]
