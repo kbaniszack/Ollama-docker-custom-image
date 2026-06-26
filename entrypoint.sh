@@ -1,5 +1,19 @@
 #!/bin/sh
 
+echo "=== DIAGNOSTIC DES PERMISSIONS ==="
+echo "Utilisateur courant : $(id)"
+echo "Contenu et droits de /workspace :"
+ls -la /workspace
+
+echo "Test d'écriture sur le volume S3..."
+if touch /workspace/test_write.txt; then
+    echo "[SUCCÈS] Le conteneur peut écrire sur le volume S3 monté dans /workspace."
+    rm /workspace/test_write.txt
+else
+    echo "[ÉCHEC] Impossible d'écrire sur le volume S3 dans /workspace (Permission denied ?)"
+fi
+echo "=================================="
+
 # Modèle par défaut si non spécifié
 MODEL_NAME=${MODEL_NAME:-"qwen3-coder:30b"}
 
