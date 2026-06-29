@@ -273,7 +273,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header("Content-Type", "text/event-stream")
         self.send_header("Cache-Control", "no-cache")
-        self.send_header("Connection", "keep-alive")
+        self.send_header("Connection", "close")
         self.end_headers()
 
         comp_id = data.get("id", "chatcmpl-proxy")
@@ -390,6 +390,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
         # 5) [DONE] sentinel
         self.wfile.write(b"data: [DONE]\n\n")
         self.wfile.flush()
+        self.close_connection = True
         log.info("✅ Sent SSE response (%d choices)", len(data.get("choices", [])))
 
     def _proxy_raw_post(self, url, body, headers):
