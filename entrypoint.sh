@@ -31,14 +31,17 @@ else
     MANIFEST_PATH="/workspace/models/manifests/registry.ollama.ai/library/$RAW_MODEL/$TAG"
 fi
 
+# Forcer Ollama à écouter localement sur le port interne 11430
+export OLLAMA_HOST=127.0.0.1:11430
+
 # Vérifier si le modèle est déjà présent dans le volume persistant
 if [ ! -f "$MANIFEST_PATH" ]; then
     echo "Modèle '$MODEL_NAME' non trouvé ($MANIFEST_PATH), téléchargement en cours..."
-    # Lancer ollama serve en arrière-plan pour le pull
+    # Lancer ollama serve en arrière-plan pour le pull (écoute sur 11430)
     ollama serve &
     # Attendre que le serveur soit prêt
     sleep 10 
-    # Télécharger le modèle spécifié
+    # Télécharger le modèle spécifié (ollama pull utilise la variable OLLAMA_HOST=127.0.0.1:11430)
     ollama pull "$MODEL_NAME"
     # Arrêter le serveur temporaire pour redémarrer proprement
     pkill ollama
@@ -47,6 +50,11 @@ else
     echo "Modèle '$MODEL_NAME' trouvé dans le stockage persistant."
 fi
 
-# Lancer Ollama normalement
-echo "Démarrage du serveur Ollama..."
-exec ollama serve
+# Lancer Ollama en arrière-plan sur localhost:11430
+echo "Démarrage du serveur Ollama local sur 127.0.0.1:11430..."
+ollama serve &
+sleep 5
+
+# Lancer le proxy de tool-calling sur le port public 11434 (PID 1 du conteneur)
+echo "Démarrage du proxy de Tool-calling sur le port public 11434..."
+exec python3 /usr/bin/ollama_tool_proxy.py --port 11434 --target http://127.0.0.1:11430

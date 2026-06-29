@@ -1,0 +1,14 @@
+[Unit]
+Description=Ollama Tool-Call Proxy for Hermes Agent
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /mnt/d/skipple/Ollama-docker-custom-image/ollama_tool_proxy.py --port 11435
+Restart=always
+RestartSec=3
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
