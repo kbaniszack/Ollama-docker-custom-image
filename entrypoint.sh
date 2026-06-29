@@ -71,8 +71,8 @@ prewarm_model() {
         return
     fi
     # Pré-charger le modèle en mémoire (keep_alive: 5m pour libérer la VRAM si inutilisé)
-    echo "Pré-chargement du modèle '$MODEL' en mémoire..."
-    curl -s -X POST http://127.0.0.1:11430/api/chat -d "{\"model\": \"$MODEL\", \"messages\": [], \"keep_alive\": \"5m\"}"
+    echo "Pré-chargement du modèle '$MODEL' en mémoire via python..."
+    python3 -c "import urllib.request, json; urllib.request.urlopen(urllib.request.Request('http://127.0.0.1:11430/api/chat', data=json.dumps({'model': '$MODEL', 'messages': [], 'keep_alive': '5m'}).encode(), headers={'Content-Type': 'application/json'}))"
     echo ""
 }
 
