@@ -53,7 +53,13 @@ fi
 # Lancer Ollama en arrière-plan sur localhost:11430
 echo "Démarrage du serveur Ollama local sur 127.0.0.1:11430..."
 ollama serve &
-sleep 5
+sleep 8
+
+# Pré-charger le modèle en mémoire (keep_alive: -1 le garde en VRAM indéfiniment)
+echo "Pré-chargement du modèle '$MODEL_NAME' en mémoire..."
+curl -s -X POST http://127.0.0.1:11430/api/chat -d "{\"model\": \"$MODEL_NAME\", \"messages\": [], \"keep_alive\": -1}"
+echo ""
+echo "Modèle pré-chargé avec succès !"
 
 # Lancer le proxy de tool-calling sur le port public 11434 (PID 1 du conteneur)
 echo "Démarrage du proxy de Tool-calling sur le port public 11434..."
